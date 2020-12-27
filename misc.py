@@ -1,8 +1,13 @@
-def draw_line(image, i, j, di, dj, cell_length):
-    for k in range(cell_length):
-        current_i = make_interval(i + k * di, image.shape[0] - 1, 0)
-        current_j = make_interval(j + k * dj, image.shape[1] - 1, 0)
-        image[current_i, current_j] = 1
+import numpy as np
+from skimage import io
+
+
+def imread(img_path):
+    return io.imread(img_path, as_gray=True)
+
+
+def imsave(image_path, image):
+    io.imsave(image_path, image, check_contrast=False)
 
 
 def make_interval(val, max_val, min_val=0):
@@ -12,3 +17,8 @@ def make_interval(val, max_val, min_val=0):
         return max_val
     else:
         return val
+
+
+def generate_graph(skeleton, grid, cell_length):
+    graph, baricenters = generate_nodes(skeleton, grid, cell_length)
+    graph = add_edges()

@@ -1,10 +1,11 @@
 import os
 
-import numpy as np
 import skimage
 from skimage import io, morphology, transform
 
 import inkml2img
+import preprocessing
+from graph_image import GraphImage
 from misc import *
 
 # np.set_printoptions(threshold=np.inf)
@@ -12,6 +13,7 @@ from misc import *
 inkml_path = 'trainData1/'
 png_path = 'images/'
 skeleton_path = 'skeletons/'
+node_path = 'nodes/'
 graph_path = 'graphs/'
 
 # for inkml in os.scandir(inkml_path):
@@ -22,40 +24,22 @@ graph_path = 'graphs/'
 for file in os.scandir(png_path):
     image_name = file.name
     print(image_name)
-    image = io.imread(png_path + image_name, as_gray=True)
-    image_resized = transform.resize(image,
-                                     (512,
-                                      image.shape[1] * 512 // image.shape[0]))
-    image_binarized = np.array(image_resized > 0.5, dtype=float)
-    image_inverted = skimage.util.invert(image_binarized)
-    skeleton = morphology.skeletonize(image_inverted)
-    io.imsave(skeleton_path + image_name,
-              np.array(skeleton * 255, dtype=np.uint8),
-              check_contrast=False)
-    cell_length = 24
-    grid = np.zeros((skeleton.shape[0] // cell_length,
-                     skeleton.shape[1] // cell_length))
-    for i in range(grid.shape[0]):
-        for j in range(grid.shape[1]):
-            grid[i, j] = np.any(skeleton[cell_length * i:cell_length * (i + 1),
-                                cell_length * j:cell_length * (j + 1)])
-    graph = np.zeros(skeleton.shape)
-    for i in range(grid.shape[0]):
-        for j in range(grid.shape[1]):
-            graph[cell_length * i + cell_length // 2,
-                  cell_length * j + cell_length // 2] = grid[i, j]
-            if grid[make_interval(i, grid.shape[0] - 1),
-                    make_interval(j, grid.shape[1] - 1)]:
-                for di in (-1, 0, 1):
-                    for dj in (-1, 0, 1):
-                        if grid[make_interval(i + di, grid.shape[0] - 1),
-                                make_interval(j + dj, grid.shape[1] - 1)]:
-                            draw_line(graph, cell_length * i + cell_length // 2,
-                                      cell_length * j + cell_length // 2,
-                                      di, dj, cell_length)
-    io.imsave(graph_path + 'graph-' + image_name,
-              np.array(graph * 255, dtype=np.uint8),
-              check_contrast=False)
-    io.imsave(graph_path + 'grid-' + image_name,
-              np.array(grid * 255, dtype=np.uint8),
-              check_contrast=False)
+
+    image = imread(png_path + image_name)
+    image_resized = preprocessing.resize(image, (512, image.shape[1] * 512 // image.shape[0]))
+    image_binarized = preprocessing.binarize(image_resized)
+    image_inverted = preprocessing.invert(image_binarized)
+    image_skeletonized = preprocessing.skeletonize(image_inverted)
+    imsave(skeleton_path + image_name, np.array(image_skeletonized * 255, dtype=np.uint8))
+
+    gi = GraphImage(image_skeletonized, 32)
+    nodes_image = gi.represent_nodes()
+    graph = gi.represent_graph_simple()
+
+    imsave(node_path + image_name,
+              np.array(nodes_image * 255, dtype=np.uint8))
+    imsave(graph_path + image_name,
+              np.array(graph * 255, dtype=np.uint8))
+    # io.imsave(graph_path + 'grid-' + image_name,
+    #           np.array(grid * 255, dtype=np.uint8),
+    #           check_contrast=False)
