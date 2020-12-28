@@ -15,6 +15,7 @@ png_path = 'images/'
 skeleton_path = 'skeletons/'
 node_path = 'nodes/'
 graph_path = 'graphs/'
+graph_no_grid_connection_path = 'graphs-no-grid-connection/'
 
 # for inkml in os.scandir(inkml_path):
 #     print(inkml.name)
@@ -34,12 +35,15 @@ for file in os.scandir(png_path):
 
     gi = GraphImage(image_skeletonized, 32)
     nodes_image = gi.represent_nodes()
-    graph = gi.represent_graph_simple()
+    graph_simple = gi.represent_graph_no_grid_connection()
+    graph = gi.represent_graph()
 
     imsave(node_path + image_name,
-              np.array(nodes_image * 255, dtype=np.uint8))
+           np.array(nodes_image * 255, dtype=np.uint8))
+    imsave(graph_no_grid_connection_path + image_name,
+           np.array(graph_simple * 255, dtype=np.uint8))
     imsave(graph_path + image_name,
-              np.array(graph * 255, dtype=np.uint8))
+           np.array(graph * 255, dtype=np.uint8))
     # io.imsave(graph_path + 'grid-' + image_name,
     #           np.array(grid * 255, dtype=np.uint8),
     #           check_contrast=False)
