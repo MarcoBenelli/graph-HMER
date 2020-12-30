@@ -3,7 +3,7 @@ import numpy as np
 from misc import *
 
 
-class GraphImage:
+class GraphRepresentatorGrid:
     def __init__(self, skeleton, cell_length):
         self.cell_length = cell_length
         self.skeleton = skeleton
@@ -12,12 +12,11 @@ class GraphImage:
         for i in range(self.grid.shape[0]):
             for j in range(self.grid.shape[1]):
                 self.grid[i, j] = np.any(skeleton[cell_length * i:cell_length * (i + 1),
-                                                  cell_length * j:cell_length * (j + 1)])
+                                         cell_length * j:cell_length * (j + 1)])
         self.baricenters = []
+        self.calculate_baricenters()
 
-    def represent_nodes(self):
-        graph = np.zeros(self.skeleton.shape)
-        self.baricenters.clear()
+    def calculate_baricenters(self):
         for i in range(self.grid.shape[0]):
             self.baricenters.append([])
             for j in range(self.grid.shape[1]):
@@ -33,11 +32,9 @@ class GraphImage:
                 if num_points > 0:
                     baricenter_i //= num_points
                     baricenter_j //= num_points
-                    graph[baricenter_i, baricenter_j] = 1
                     self.baricenters[i].append((baricenter_i, baricenter_j))
                 else:
                     self.baricenters[i].append(None)
-        return graph
 
     def represent_graph_no_grid_connection(self):
         graph = np.zeros(self.skeleton.shape)
@@ -49,18 +46,11 @@ class GraphImage:
                         for dj in (-1, 0, 1):
                             if self.grid[make_interval(i + di, self.grid.shape[0]),
                                          make_interval(j + dj, self.grid.shape[1])]:
-                                self.draw_line(graph,
-                                               self.baricenters[i][j],
-                                               self.baricenters[make_interval(i + di, self.grid.shape[0])]
-                                                               [make_interval(j + dj, self.grid.shape[1])])
+                                draw_line(graph, self.baricenters[i][j],
+                                          self.baricenters[make_interval(i + di, self.grid.shape[0])]
+                                                          [make_interval(j + dj, self.grid.shape[1])])
+        self.draw_dots(graph, 2)
         return graph
-
-    def draw_line(self, image, point1, point2):
-        n = max(abs(point1[0] - point2[0]), abs(point1[1] - point2[1]))
-        for k in range(n):
-            current_i = make_interval(point1[0] + k * (point2[0] - point1[0]) // n, image.shape[0])
-            current_j = make_interval(point1[1] + k * (point2[1] - point1[1]) // n, image.shape[1])
-            image[current_i, current_j] = 1
 
     def represent_graph(self):
         graph = np.zeros(self.skeleton.shape)
@@ -75,15 +65,24 @@ class GraphImage:
                             for k in range(self.cell_length):
                                 if self.skeleton[self.cell_length * i + k * di, self.cell_length * j + k * dj]:
                                     for dk in (-1, 0, 1):
-                                        if self.skeleton[self.cell_length * i + make_interval(k + dk, self.cell_length) * di - dj,
-                                                         self.cell_length * j + make_interval(k + dk, self.cell_length) * dj - di]:
+                                        if self.skeleton[self.cell_length * i
+                                                         + make_interval(k + dk, self.cell_length) * di - dj,
+                                                         self.cell_length * j
+                                                         + make_interval(k + dk, self.cell_length) * dj - di]:
                                             found_connection = True
                             if found_connection:
-                                self.draw_line(graph, self.baricenters[i][j], self.baricenters[i - dj][j - di])
+                                draw_line(graph, self.baricenters[i][j], self.baricenters[i - dj][j - di])
                     # diagonal directions
                     if i > 0 and j > 0 and self.skeleton[self.cell_length * i - 1, self.cell_length * j - 1]:
-                        self.draw_line(graph, self.baricenters[i][j], self.baricenters[i - 1][j - 1])
-                    if i > 0 and j < len(self.baricenters[0]) - 1\
+                        draw_line(graph, self.baricenters[i][j], self.baricenters[i - 1][j - 1])
+                    if i > 0 and j < len(self.baricenters[0]) - 1 \
                             and self.skeleton[self.cell_length * i - 1, self.cell_length * (j + 1)]:
-                        self.draw_line(graph, self.baricenters[i][j], self.baricenters[i - 1][j + 1])
+                        draw_line(graph, self.baricenters[i][j], self.baricenters[i - 1][j + 1])
+        self.draw_dots(graph, 2)
         return graph
+
+    def draw_dots(self, graph, radius):
+        for row in self.baricenters:
+            for point in row:
+                if point is not None:
+                    draw_dot(graph, point, radius)

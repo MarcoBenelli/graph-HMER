@@ -8,7 +8,7 @@ def resize(image, shape):
 
 
 def binarize(image, threshold=0.5):
-    return np.array(image > 0.5, dtype=float)
+    return np.array(image > threshold, dtype=float)
 
 
 def invert(image):
