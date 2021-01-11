@@ -48,7 +48,7 @@ class GraphRepresentatorGrid:
                                          make_interval(j + dj, self.grid.shape[1])]:
                                 draw_line(graph, self.baricenters[i][j],
                                           self.baricenters[make_interval(i + di, self.grid.shape[0])]
-                                                          [make_interval(j + dj, self.grid.shape[1])])
+                                          [make_interval(j + dj, self.grid.shape[1])])
         self.draw_dots(graph, 2)
         return graph
 
