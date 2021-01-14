@@ -27,4 +27,5 @@ def draw_line(image, point1, point2):
 
 
 def draw_dot(image, point, radius):
-    image[point[0] - radius: point[0] + radius, point[1] - radius: point[1] + radius] = 1
+    image[max(point[0] - radius, 0): min(point[0] + radius, image.shape[0]),
+          max(point[1] - radius, 0): min(point[1] + radius, image.shape[1])] = 1
