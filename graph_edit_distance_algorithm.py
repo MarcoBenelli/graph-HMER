@@ -23,21 +23,32 @@ class GraphEditDistanceAlgorithm:
 
     # TODO
     def execute(self, graph1, graph2, name1, name2):
-        print('  starting execute')
         normalized_graph1 = graph1.normalize()
         normalized_graph2 = graph2.normalize()
-        print('  normalized graphs')
         g1 = normalized_graph1.convert_networkx()
         g2 = normalized_graph2.convert_networkx()
-        print('  converted graphs')
         imsave('debug/' + name1,
-               np.array(normalized_graph1.get_image() * 255, dtype=np.uint8))
+               np.array(normalized_graph1.get_image(size=128) * 255, dtype=np.uint8))
         imsave('debug/' + name2,
-               np.array(normalized_graph2.get_image() * 255, dtype=np.uint8))
-        print('  saved images')
-        ged = nx.algorithms.similarity.graph_edit_distance(g1, g2, timeout=1)
+               np.array(normalized_graph2.get_image(size=128) * 255, dtype=np.uint8))
+        ged = nx.algorithms.similarity.graph_edit_distance(g1, g2, timeout=1,
+                                                           edge_del_cost=self.edge_cost,
+                                                           edge_ins_cost=self.edge_cost,
+                                                           edge_subst_cost=self.edge_subst_cost)
         print('  calculated ged with ' + name1 + ' = ' + str(ged))
         return ged
+
+    @staticmethod
+    def edge_cost(edge):
+        return edge['length']
+
+    @staticmethod
+    def edge_subst_cost(edge1, edge2):
+        return abs(edge1['length'] - edge2['length'])
+
+    @staticmethod
+    def node_cost(node1):
+        return 1
 
 
 if __name__ == '__main__':

@@ -19,10 +19,10 @@ graph_grid_path = 'graphs-grid/'
 graph_no_grid_connection_path = 'graphs-no-grid-connection/'
 graph_polygon_path = 'graphs-polygon/'
 
-for inkml in os.scandir(inkml_path):
-    print(inkml.name)
-    inkml2img.inkml2img(inkml.path,
-                        png_path + os.path.splitext(inkml.name)[0] + '.png')
+# for inkml in os.scandir(inkml_path):
+#     print(inkml.name)
+#     inkml2img.inkml2img(inkml.path,
+#                         png_path + os.path.splitext(inkml.name)[0] + '.png')
 
 for file in os.scandir(png_path):
     image_name = file.name
@@ -52,3 +52,5 @@ for file in os.scandir(png_path):
     geda = GraphEditDistanceAlgorithm(2)
     query = Graph(grp.graph.coords_lists[0:1], grp.graph.shape)
     geda.find(grp.graph, query, image_name, 'query-' + image_name)
+
+    break

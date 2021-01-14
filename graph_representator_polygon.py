@@ -16,4 +16,4 @@ class GraphRepresentatorPolygon:
         self.graph = Graph(coords_lists, binarized_image.shape)
 
     def represent_graph(self):
-        return self.graph.get_image()
+        return self.graph.get_image(size=64)
