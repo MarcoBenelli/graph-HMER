@@ -2,7 +2,6 @@ import os
 
 import numpy as np
 
-import inkml2img
 import preprocessing
 from graph import Graph
 from graph_representator_grid import GraphRepresentatorGrid
@@ -50,7 +49,7 @@ for file in os.scandir(png_path):
            np.array(graph_image_polygon * 255, dtype=np.uint8))
 
     geda = GraphEditDistanceAlgorithm(2)
-    query = Graph(grp.graph.coords_lists[0:1], grp.graph.shape)
+    query = Graph(grp.graph.coords_lists[10:11], grp.graph.shape)
     geda.find(grp.graph, query, image_name, 'query-' + image_name)
 
     break

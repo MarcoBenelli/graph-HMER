@@ -34,7 +34,10 @@ class GraphEditDistanceAlgorithm:
         ged = nx.algorithms.similarity.graph_edit_distance(g1, g2, timeout=1,
                                                            edge_del_cost=self.edge_cost,
                                                            edge_ins_cost=self.edge_cost,
-                                                           edge_subst_cost=self.edge_subst_cost)
+                                                           edge_subst_cost=self.edge_subst_cost,
+                                                           node_del_cost=self.node_cost,
+                                                           node_ins_cost=self.node_cost,
+                                                           node_subst_cost=self.node_subst_cost)
         print('  calculated ged with ' + name1 + ' = ' + str(ged))
         return ged
 
@@ -47,8 +50,12 @@ class GraphEditDistanceAlgorithm:
         return abs(edge1['length'] - edge2['length'])
 
     @staticmethod
-    def node_cost(node1):
-        return 1
+    def node_cost(node):
+        return node['weight']
+
+    @staticmethod
+    def node_subst_cost(node1, node2):
+        return abs(node1['weight'] - node2['weight'])
 
 
 if __name__ == '__main__':

@@ -33,3 +33,7 @@ def draw_dot(image, point, radius):
 
 def multiply_coord(point, scalar):
     return tuple(int(coord * scalar) for coord in point)
+
+
+def vect_norm(x):
+    return sum(i ** 2 for i in x) ** (1 / 2)

@@ -31,11 +31,17 @@ class Graph:
 
     def get_edge_length(self, i):
         return (self.coords_lists[0][i][0] - self.coords_lists[0][(i + 1) % len(self.coords_lists[0])][0]) ** 2 + (
-                    self.coords_lists[0][i][1] - self.coords_lists[0][(i + 1) % len(self.coords_lists[0])][1]) ** 2
+                self.coords_lists[0][i][1] - self.coords_lists[0][(i + 1) % len(self.coords_lists[0])][1]) ** 2
 
-    # TODO
     def get_node_weight(self, i):
-        pass
+        vect1x = self.coords_lists[0][(i + 1) % len(self.coords_lists[0])][0] - self.coords_lists[0][i][0]
+        vect1y = self.coords_lists[0][(i + 1) % len(self.coords_lists[0])][1] - self.coords_lists[0][i][1]
+        vect2x = self.coords_lists[0][i][0] - self.coords_lists[0][(i - 1) % len(self.coords_lists[0])][0]
+        vect2y = self.coords_lists[0][i][1] - self.coords_lists[0][(i - 1) % len(self.coords_lists[0])][1]
+        if vect_norm((vect1x, vect1y)) == 0 or vect_norm((vect2x, vect2y)) == 0:
+            return 0
+        cosine = ((vect1x * vect2x) + (vect1y * vect2y)) / (vect_norm((vect1x, vect1y)) * vect_norm((vect2x, vect2y)))
+        return (1-cosine)/2
 
     def normalize(self):
         min_i = np.inf
