@@ -48,8 +48,9 @@ for file in os.scandir(png_path):
     imsave(graph_polygon_path + image_name,
            np.array(graph_image_polygon * 255, dtype=np.uint8))
 
-    geda = GraphEditDistanceAlgorithm(2, "COSINE")
-    query = Graph(grp.graph.coords_lists[23:24], grp.graph.shape)
+    geda = GraphEditDistanceAlgorithm(4, 'DISTANCE')
+    char_index = 25
+    query = Graph(grp.graph.coords_lists[char_index:char_index + 1], grp.graph.shape)
     geda.find(grp.graph, query, image_name, 'query-' + image_name)
 
     break
