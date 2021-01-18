@@ -28,7 +28,7 @@ def draw_line(image, point1, point2):
 
 def draw_dot(image, point, radius):
     image[max(point[0] - radius, 0): min(point[0] + radius, image.shape[0]),
-          max(point[1] - radius, 0): min(point[1] + radius, image.shape[1])] = 1
+    max(point[1] - radius, 0): min(point[1] + radius, image.shape[1])] = 1
 
 
 def multiply_coord(point, scalar):
@@ -37,3 +37,7 @@ def multiply_coord(point, scalar):
 
 def vect_norm(x):
     return sum(i ** 2 for i in x) ** (1 / 2)
+
+
+def euclidean_distance(point1, point2):
+    return sum((i1 - i2) ** 2 for i1, i2 in zip(point1, point2)) ** (1 / 2)

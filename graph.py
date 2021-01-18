@@ -22,9 +22,9 @@ class Graph:
     def convert_networkx(self):
         assert len(self.coords_lists) == 1
         g = nx.Graph()
-        g.add_node(0, weight=self.get_node_weight(0))
+        g.add_node(0, position=self.coords_lists[0][0], weight=self.get_node_weight(0))
         for i, coord in enumerate(self.coords_lists[0][1:]):
-            g.add_node(i + 1, weight=self.get_node_weight(i + 1))
+            g.add_node(i + 1, position=self.coords_lists[0][i + 1], weight=self.get_node_weight(i + 1))
             g.add_edge(i, i + 1, length=self.get_edge_length(i))
         g.add_edge(len(self.coords_lists[0]) - 1, 0, length=self.get_edge_length(-1))
         return g
@@ -41,7 +41,7 @@ class Graph:
         if vect_norm((vect1x, vect1y)) == 0 or vect_norm((vect2x, vect2y)) == 0:
             return 0
         cosine = ((vect1x * vect2x) + (vect1y * vect2y)) / (vect_norm((vect1x, vect1y)) * vect_norm((vect2x, vect2y)))
-        return (1-cosine)/2
+        return (1 - cosine) / 2
 
     def normalize(self):
         min_i = np.inf

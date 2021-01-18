@@ -6,8 +6,9 @@ from misc import *
 
 
 class GraphEditDistanceAlgorithm:
-    def __init__(self, threshold):
+    def __init__(self, threshold, mode):
         self.threshold = threshold
+        self.mode = mode
 
     def find(self, expression, query, expression_name, query_name):
         matches = []
@@ -31,31 +32,30 @@ class GraphEditDistanceAlgorithm:
                np.array(normalized_graph1.get_image(size=128) * 255, dtype=np.uint8))
         imsave('debug/' + name2,
                np.array(normalized_graph2.get_image(size=128) * 255, dtype=np.uint8))
-        ged = nx.algorithms.similarity.graph_edit_distance(g1, g2, timeout=1,
-                                                           edge_del_cost=self.edge_cost,
-                                                           edge_ins_cost=self.edge_cost,
-                                                           edge_subst_cost=self.edge_subst_cost,
-                                                           node_del_cost=self.node_cost,
-                                                           node_ins_cost=self.node_cost,
-                                                           node_subst_cost=self.node_subst_cost)
-        print('  calculated ged with ' + name1 + ' = ' + str(ged))
+        if self.mode == 'COSINE':
+            ged = nx.algorithms.similarity.graph_edit_distance(g1, g2, timeout=1,
+                                                               edge_del_cost=lambda e: e['length'],
+                                                               edge_ins_cost=lambda e: e['length'],
+                                                               edge_subst_cost=lambda e1, e2: abs(
+                                                                   e1['length'] - e2['length']),
+                                                               node_del_cost=lambda n: n['weight'],
+                                                               node_ins_cost=lambda n: n['weight'],
+                                                               node_subst_cost=lambda n1, n2: abs(
+                                                                   n1['weight'] - n2['weight']))
+        elif self.mode == 'DISTANCE':
+            ged = nx.algorithms.similarity.graph_edit_distance(g1, g2, timeout=1,
+                                                               edge_del_cost=lambda e: e['length'],
+                                                               edge_ins_cost=lambda e: e['length'],
+                                                               edge_subst_cost=lambda e1, e2: abs(
+                                                                   e1['length'] - e2['length']),
+                                                               node_del_cost=lambda n: 1,
+                                                               node_ins_cost=lambda n: 1,
+                                                               node_subst_cost=lambda n1, n2: euclidean_distance(
+                                                                   n1['position'], n2['position']))
+        else:
+            raise RuntimeError('Invalide GED mode')
+        print('calculated ged with ' + name1 + ' = ' + str(ged))
         return ged
-
-    @staticmethod
-    def edge_cost(edge):
-        return edge['length']
-
-    @staticmethod
-    def edge_subst_cost(edge1, edge2):
-        return abs(edge1['length'] - edge2['length'])
-
-    @staticmethod
-    def node_cost(node):
-        return node['weight']
-
-    @staticmethod
-    def node_subst_cost(node1, node2):
-        return abs(node1['weight'] - node2['weight'])
 
 
 if __name__ == '__main__':
