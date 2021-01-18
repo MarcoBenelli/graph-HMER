@@ -10,10 +10,10 @@ class GraphEditDistanceAlgorithm:
         self.threshold = threshold
         self.mode = mode
 
+    # TODO
     def find(self, expression, query, expression_name, query_name):
-        matches = []
         normalized_query = query.normalize()
-        imsave('ged-results/' + "query_" + query_name,
+        imsave('ged-results/' + 'query_' + query_name,
                np.array(normalized_query.get_image(size=128) * 255, dtype=np.uint8))
         for i, coords in enumerate(expression.coords_lists):
             symbol = Graph([coords], expression.shape)
@@ -23,10 +23,9 @@ class GraphEditDistanceAlgorithm:
                    np.array(normalized_symbol.get_image(size=128) * 255, dtype=np.uint8))
             print('calculated ged with ' + expression_name + ' = ' + str(ged))
             if ged is not None and ged <= self.threshold:
-                matches.append(coords)
                 print('MATCHED')
+                return True
             print()
-        print(len(matches))
 
     def execute(self, graph1, graph2):
         nx_graph1 = graph1.convert_networkx()

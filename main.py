@@ -1,7 +1,9 @@
 import os
+import xml.etree.ElementTree as ET
 
 import numpy as np
 
+# import inkml2img
 import preprocessing
 from graph import Graph
 from graph_representator_grid import GraphRepresentatorGrid
@@ -18,10 +20,22 @@ graph_grid_path = 'graphs-grid/'
 graph_no_grid_connection_path = 'graphs-no-grid-connection/'
 graph_polygon_path = 'graphs-polygon/'
 
-# for inkml in os.scandir(inkml_path):
-#     print(inkml.name)
-#     inkml2img.inkml2img(inkml.path,
-#                         png_path + os.path.splitext(inkml.name)[0] + '.png')
+# TODO
+for inkml in os.scandir(inkml_path):
+    print()
+    print(inkml.name)
+    # inkml2img.inkml2img(inkml.path,
+    #                     png_path + os.path.splitext(inkml.name)[0] + '.png')
+    tree = ET.parse(inkml.path)
+    root = tree.getroot()
+    for child in root:
+        if child.tag == '{http://www.w3.org/2003/InkML}traceGroup':
+            for child1 in child:
+                i = 0
+                for child2 in child1:
+                    if child2.tag == '{http://www.w3.org/2003/InkML}annotation':
+                        i += 1
+                        print(child2.text, i)
 
 for file in os.scandir(png_path):
     image_name = file.name
@@ -49,8 +63,8 @@ for file in os.scandir(png_path):
            np.array(graph_image_polygon * 255, dtype=np.uint8))
 
     geda = GraphEditDistanceAlgorithm(4, 'DISTANCE')
-    char_index = 25
+    char_index = 1
     query = Graph(grp.graph.coords_lists[char_index:char_index + 1], grp.graph.shape)
-    geda.find(grp.graph, query, image_name, 'query-' + image_name)
+    found = geda.find(grp.graph, query, image_name, 'query-' + image_name)
 
     break
