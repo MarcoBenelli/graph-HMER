@@ -64,5 +64,4 @@ class Graph:
             for coord in coords:
                 coords_lists[-1].append(((coord[0] - min_i) / scale_factor,
                                          (coord[1] - min_j) / scale_factor))
-        # print(coords_lists)
         return Graph(coords_lists)

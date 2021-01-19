@@ -15,7 +15,8 @@ class GraphRepresentatorFactory:
 
     def build_graph(self, images_path, image_name, graph_polygon_path=None, skeletons_path=None, graph_grid_path=None):
         image = imread(images_path + image_name)
-        image_resized = preprocessing.resize(image, (self.image_height, image.shape[1] * self.image_height // image.shape[0]))
+        image_resized = preprocessing.resize(image,
+                                             (self.image_height, image.shape[1] * self.image_height // image.shape[0]))
         image_binarized = preprocessing.binarize(image_resized, self.threshold)
         image_inverted = preprocessing.invert(image_binarized)
         image_skeletonized = preprocessing.skeletonize(image_inverted)
