@@ -1,3 +1,4 @@
+from termcolor import colored
 import networkx as nx
 import numpy as np
 
@@ -10,28 +11,25 @@ class GraphEditDistanceAlgorithm:
         self.threshold = threshold
         self.mode = mode
 
-    # TODO
-    def find(self, expression, query, expression_name, query_name):
+    def find(self, expression, query, expression_name, output_path):
         normalized_query = query.normalize()
-        imsave('ged-results/' + 'query_' + query_name,
-               np.array(normalized_query.get_image(size=128) * 255, dtype=np.uint8))
         for i, coords in enumerate(expression.coords_lists):
             symbol = Graph([coords], expression.shape)
             normalized_symbol = symbol.normalize()
             ged = self.execute(normalized_symbol, normalized_query)
-            imsave('ged-results/' + str('%.3f' % ged) + '_' + expression_name,
-                   np.array(normalized_symbol.get_image(size=128) * 255, dtype=np.uint8))
-            print('calculated ged with ' + expression_name + ' = ' + str(ged))
+            if ged is not None:
+                imsave(output_path + str('%.3f' % ged) + '_' + str(i) + '_' + expression_name,
+                       np.array(normalized_symbol.get_image(size=128) * 255, dtype=np.uint8))
+            print(colored('        calculated ged with ' + str(i) + '-th symbol = ' + str(ged), 'green' if ged is not None and ged <= self.threshold else 'red'))
             if ged is not None and ged <= self.threshold:
-                print('MATCHED')
                 return True
-            print()
+        return False
 
     def execute(self, graph1, graph2):
         nx_graph1 = graph1.convert_networkx()
         nx_graph2 = graph2.convert_networkx()
         if self.mode == 'COSINE':
-            ged = nx.algorithms.similarity.graph_edit_distance(nx_graph1, nx_graph2, timeout=1,
+            ged = nx.algorithms.similarity.graph_edit_distance(nx_graph1, nx_graph2, timeout=0.1,
                                                                edge_del_cost=lambda e: e['length'],
                                                                edge_ins_cost=lambda e: e['length'],
                                                                edge_subst_cost=lambda e1, e2: abs(
@@ -41,7 +39,7 @@ class GraphEditDistanceAlgorithm:
                                                                node_subst_cost=lambda n1, n2: abs(
                                                                    n1['weight'] - n2['weight']))
         elif self.mode == 'DISTANCE':
-            ged = nx.algorithms.similarity.graph_edit_distance(nx_graph1, nx_graph2, timeout=1,
+            ged = nx.algorithms.similarity.graph_edit_distance(nx_graph1, nx_graph2, timeout=0.1,
                                                                edge_del_cost=lambda e: e['length'],
                                                                edge_ins_cost=lambda e: e['length'],
                                                                edge_subst_cost=lambda e1, e2: abs(
