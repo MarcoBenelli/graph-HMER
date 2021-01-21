@@ -1,3 +1,7 @@
+import os
+import xml.etree.ElementTree as ET
+from copy import deepcopy
+
 from skimage import io
 import matplotlib.pyplot as plt
 
@@ -68,3 +72,20 @@ def plot_precision_recall(recall, precision, output_path):
     ax.set_ylabel('Precision')
     ax.plot(interpolated_recall, interpolated_precision)
     fig.savefig(output_path)
+
+
+def extract_query(input_path, output_path):
+    ns = {'InkML': 'http://www.w3.org/2003/InkML'}
+    symbols = set()
+    for inkml in os.scandir(input_path):
+        tree = ET.parse(inkml.path)
+        for i, trace_group in enumerate(tree.findall('InkML:traceGroup/InkML:traceGroup', ns)):
+            annotation = trace_group.find('InkML:annotation', ns).text
+            if annotation not in symbols:
+                symbols.add(annotation)
+                tree_copy = deepcopy(tree)
+                for trace_group_copy in tree_copy.findall('InkML:traceGroup/InkML:traceGroup', ns):
+                    if trace_group.attrib['{http://www.w3.org/XML/1998/namespace}id'] != trace_group_copy.attrib[
+                            '{http://www.w3.org/XML/1998/namespace}id']:
+                        tree_copy.getroot().find('InkML:traceGroup', ns).remove(trace_group_copy)
+                tree_copy.write(output_path + os.path.splitext(inkml.name)[0] + '-' + str(i) + '.inkml')
