@@ -24,7 +24,7 @@ class GraphRepresentatorFactory:
             imsave(skeletons_path + image_name, np.array(image_skeletonized * 255, dtype=np.uint8))
 
         grp = GraphRepresentatorPolygon(image_inverted, self.polygon_tolerance, image_name)
-        graph_image_polygon = grp.represent_graph()
+        graph_image_polygon = grp.represent_graph_full()
 
         if graph_grid_path is not None:
             grg = GraphRepresentatorGrid(image_skeletonized, self.cell_length)

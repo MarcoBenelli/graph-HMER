@@ -22,7 +22,7 @@ class GraphEditDistanceAlgorithm:
                 ged = self.execute(normalized_symbol, normalized_query)
                 if ged is not None:
                     imsave(output_path + str('%.3f' % ged) + '_' + str(i) + '_' + expression_name,
-                           np.array(normalized_symbol.get_image(size=128) * 255, dtype=np.uint8))
+                           np.array(normalized_symbol.get_image_normalized(size=128) * 255, dtype=np.uint8))
                 print('    Calculated GED with ' + str(i + 1) + '-th symbol = ' + str(ged))
                 if ged is not None and ged < min_ged:
                     min_ged = ged

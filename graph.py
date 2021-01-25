@@ -9,7 +9,7 @@ class Graph:
         self.coords_lists = coords_lists
         self.shape = shape
 
-    def get_image(self, size):
+    def get_image_normalized(self, size):
         image = np.zeros((size, size), dtype=int)
         for coords in self.coords_lists:
             for i in range(len(coords) - 1):
@@ -17,6 +17,17 @@ class Graph:
                 draw_dot(image, multiply_coord(coords[i], size), 2)
             draw_line(image, multiply_coord(coords[-1], size), multiply_coord(coords[0], size))
             draw_dot(image, multiply_coord(coords[-1], size), 2)
+        return image
+
+    def get_image_full(self):
+        image = np.zeros(self.shape, dtype=int)
+        for coords in self.coords_lists:
+            print('coords =', coords)
+            for i in range(len(coords) - 1):
+                draw_line(image, coords[i], coords[i + 1])
+                draw_dot(image, coords[i], 2)
+            draw_line(image, coords[-1], coords[0])
+            draw_dot(image, coords[-1], 2)
         return image
 
     def convert_networkx(self):

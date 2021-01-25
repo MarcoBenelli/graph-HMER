@@ -15,5 +15,8 @@ class GraphRepresentatorPolygon:
             coords_lists.append(measure.approximate_polygon(contour, tolerance=self.tolerance))
         self.graph = Graph(coords_lists, binarized_image.shape)
 
-    def represent_graph(self):
-        return self.graph.get_image(size=64)
+    def represent_graph_normalized(self):
+        return self.graph.get_image_normalized((64, 64))
+
+    def represent_graph_full(self):
+        return self.graph.get_image_full()
