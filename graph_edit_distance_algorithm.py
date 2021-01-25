@@ -6,7 +6,7 @@ from misc import *
 
 
 class GraphEditDistanceAlgorithm:
-    def __init__(self, mode, timeout=0.01):
+    def __init__(self, mode, timeout=0.1):
         self.mode = mode
         self.timeout = timeout
 
@@ -32,7 +32,7 @@ class GraphEditDistanceAlgorithm:
     def execute(self, graph1, graph2):
         nx_graph1 = graph1.convert_networkx()
         nx_graph2 = graph2.convert_networkx()
-        if self.mode == 'COSINE':
+        if self.mode == 'angle':
             ged = nx.algorithms.similarity.graph_edit_distance(nx_graph1, nx_graph2, timeout=self.timeout,
                                                                edge_del_cost=lambda e: e['length'],
                                                                edge_ins_cost=lambda e: e['length'],
@@ -42,7 +42,7 @@ class GraphEditDistanceAlgorithm:
                                                                node_ins_cost=lambda n: n['weight'],
                                                                node_subst_cost=lambda n1, n2: abs(
                                                                    n1['weight'] - n2['weight']))
-        elif self.mode == 'DISTANCE':
+        elif self.mode == 'position':
             ged = nx.algorithms.similarity.graph_edit_distance(nx_graph1, nx_graph2, timeout=self.timeout,
                                                                edge_del_cost=lambda e: e['length'],
                                                                edge_ins_cost=lambda e: e['length'],
