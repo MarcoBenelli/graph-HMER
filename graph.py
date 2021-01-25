@@ -22,7 +22,6 @@ class Graph:
     def get_image_full(self):
         image = np.zeros(self.shape, dtype=int)
         for coords in self.coords_lists:
-            print('coords =', coords)
             for i in range(len(coords) - 1):
                 draw_line(image, coords[i], coords[i + 1])
                 draw_dot(image, coords[i], 2)
