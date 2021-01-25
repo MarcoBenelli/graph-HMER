@@ -13,6 +13,7 @@ inkml_path = 'trainData1/'
 png_path = 'images/'
 skeleton_path = 'skeletons/'
 graph_grid_path = 'graphs-grid/'
+graph_grid_adjacent_path = 'graphs-grid-adjacent/'
 graph_polygon_path = 'graphs-polygon/'
 query_images_path = 'query-images/'
 query_inkml_path = 'query-inkml/'
@@ -22,14 +23,17 @@ plots_path = 'plots/'
 shutil.rmtree(png_path)
 shutil.rmtree(skeleton_path)
 shutil.rmtree(graph_grid_path)
+shutil.rmtree(graph_grid_adjacent_path)
 shutil.rmtree(graph_polygon_path)
 shutil.rmtree(query_images_path)
 shutil.rmtree(query_inkml_path)
 shutil.rmtree(ged_results_path)
 # shutil.rmtree(plots_path)
+
 os.mkdir(png_path)
 os.mkdir(skeleton_path)
 os.mkdir(graph_grid_path)
+os.mkdir(graph_grid_adjacent_path)
 os.mkdir(graph_polygon_path)
 os.mkdir(query_images_path)
 os.mkdir(query_inkml_path)
@@ -85,7 +89,8 @@ for mode in modes:
             print(colored('Ground truth: ' + str(symbols_list), 'yellow'))
 
             image_name = os.path.splitext(inkml.name)[0] + '.png'
-            grp = grf.build_graph(png_path, image_name, graph_polygon_path, skeleton_path, graph_grid_path)
+            grp = grf.build_graph(png_path, image_name, graph_polygon_path, skeleton_path, graph_grid_path,
+                                  graph_grid_adjacent_path)
 
             ged_dict[os.path.splitext(inkml.name)[0]] = geda.find(grp.graph, query.graph, image_name, ged_results_path)
             processed_expressions += 1

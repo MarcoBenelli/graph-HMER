@@ -13,7 +13,8 @@ class GraphRepresentatorFactory:
         self.image_height = image_height
         self.threshold = threshold
 
-    def build_graph(self, images_path, image_name, graph_polygon_path=None, skeletons_path=None, graph_grid_path=None):
+    def build_graph(self, images_path, image_name, graph_polygon_path=None, skeletons_path=None, graph_grid_path=None,
+                    graph_grid_adjacent_path=None):
         image = imread(images_path + image_name)
         image_resized = preprocessing.resize(image,
                                              (self.image_height, image.shape[1] * self.image_height // image.shape[0]))
@@ -30,6 +31,11 @@ class GraphRepresentatorFactory:
             grg = GraphRepresentatorGrid(image_skeletonized, self.cell_length)
             graph_image_grid = grg.represent_graph()
             imsave(graph_grid_path + image_name,
+                   np.array(graph_image_grid * 255, dtype=np.uint8))
+        if graph_grid_adjacent_path is not None:
+            grg = GraphRepresentatorGrid(image_skeletonized, self.cell_length)
+            graph_image_grid = grg.represent_graph_no_grid_connection()
+            imsave(graph_grid_adjacent_path + image_name,
                    np.array(graph_image_grid * 255, dtype=np.uint8))
         if graph_polygon_path is not None:
             imsave(graph_polygon_path + image_name,
